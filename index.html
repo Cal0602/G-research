@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .search-container { text-align: center; margin-top: 50px; }
+        .results { margin-top: 20px; }
+        .result { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button onclick="performSearch()">Search</button>
+    </div>
+    <div class="results" id="results"></div>
+
+    <script>
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            const apiKey = 'AIzaSyAvPQGM5SxQfdUnkRp5IzZBbXtE8t02Jpo';
+            const cx = '93025243f1da44291';
+            const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${query}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsContainer = document.getElementById('results');
+                    resultsContainer.innerHTML = '';
+                    if (data.items) {
+                        data.items.forEach(item => {
+                            const result = document.createElement('div');
+                            result.classList.add('result');
+                            result.innerHTML = `
+                                <a href="${item.link}" target="_blank">${item.title}</a>
+                                <p>${item.snippet}</p>
+                            `;
+                            resultsContainer.appendChild(result);
+                        });
+                    } else {
+                        resultsContainer.innerHTML = '<p>No results found.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching search results:', error);
+                    document.getElementById('results').innerHTML = '<p>Error fetching results. Please try again later.</p>';
+                });
+        }
+    </script>
+</body>
+</html>
